@@ -6,11 +6,16 @@ package SvUsuarios;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.ResultSet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletConfig;
+import java.sql.DriverManager;
 
 /**
  *
@@ -19,10 +24,51 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "Usuarios", urlPatterns = {"/Usuarios"})
 public class Usuarios extends HttpServlet {
 
-
+    //variables globales
+    private Connection con;
+    private Statement set;
+    private ResultSet rs;
+    
+    //constructor
+    public void init(ServletConfig cfg) throws ServletException{
+    
+        //como se va a conectar a la bd
+        String url = "jdbc:mysql:3306//localhost/taquitos";
+                      //tipodedriver:gestorbd:puerto//IP/nombrebd
+                      
+        String userName = "root";
+        String password = "L3usM4fi3r-";
+        
+        try{
+            
+            Class.forName("com.mysql.jdbc.Driver");
+            /*
+            Aveces el tipo de driver ya tiene incluido el puerto de comunicación, es por ello
+            que manda un error de conexción, para resolver este error simplemente hacemos lo siguiente:
+            url = jdbc:mysql://localhost/taquitos
+            */
+            
+            con = DriverManager.getConnection(url, url, password);
+            set = con.createStatement();
+            
+            System.out.println("Conexión exitosa");
+                    
+        }catch(Exception e){
+        
+            System.out.println("Conexión no exitosa");
+            System.out.println(e.getMessage());
+            System.out.println(e.getStackTrace());
+            
+        }
+        
+    }
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        
+        String ip, ipr;
+        int edad,puerto,puertor;
         
         String nombre = request.getParameter("Nombre");
         String apellidoPaterno = request.getParameter("Apat");
@@ -30,9 +76,14 @@ public class Usuarios extends HttpServlet {
         String correo = request.getParameter("Correo");
         String contraseña = request.getParameter("Password");
         
-        int resultado = 0;
+        ip = request.getLocalAddr();
+        puerto = request.getLocalPort();
+
+        ipr = request.getRemoteAddr();
+        puertor = request.getRemotePort();
         
-        String mensajeerror = "";
+        
+        
         
         try ( PrintWriter out = response.getWriter()) {
         
@@ -49,6 +100,11 @@ public class Usuarios extends HttpServlet {
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet Usuarios at " + request.getContextPath() + "</h1>");
+            out.println("<h2>Nombre: "+nombre+"</h2>");
+            out.println("<h2>Apellido Paterno: "+apellidoPaterno+"</h2>");
+            out.println("<h2>Apellido Materno: "+apellidoMaterno+"</h2>");
+            out.println("<h2>Correo: "+correo+"</h2>");
+            out.println("<h2>Contraseña: "+contraseña+"</h2>");
             out.println("<button onclick=\"window.location='./index.html'\">Inicio</button>");
             out.println("</body>");
             out.println("</html>");
