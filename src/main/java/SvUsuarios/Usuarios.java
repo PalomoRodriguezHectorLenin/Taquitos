@@ -15,7 +15,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletConfig;
+import static java.lang.System.out;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import jakarta.servlet.ServletConfig;
 
 /**
  *
@@ -67,32 +73,36 @@ public class Usuarios extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         
-        String ip, ipr;
-        int edad,puerto,puertor;
+        //String ip, ipr;
+        //int puerto,puertor;
         
         String nombre = request.getParameter("Nombre");
         String apellidoPaterno = request.getParameter("Apat");
         String apellidoMaterno = request.getParameter("Apmat");
         String correo = request.getParameter("Correo");
         String contraseña = request.getParameter("Password");
-        
+        int resultado = 0;
+        String mensajeError = "";
+        /*
         ip = request.getLocalAddr();
         puerto = request.getLocalPort();
 
         ipr = request.getRemoteAddr();
         puertor = request.getRemotePort();
+        */
         
-        
-        
-        
+        //vamos a inentar registrar en bd
+       
         try ( PrintWriter out = response.getWriter()) {
-        
-            System.out.println(nombre);
-            System.out.println(apellidoPaterno);
-            System.out.println(apellidoMaterno);
-            System.out.println(correo);
-            System.out.println(contraseña);
+            /*
+            Para poder registrar un usuario es necesario la sentencia insert bajo el siguiente esquema:
             
+            insert into nombretabla(atributo1, atributo2, ....) values("valor1", 'valor2', ...)
+            "" son para valores de tipo caena
+            '' numerico
+            nada numerico
+            */
+   
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -106,6 +116,25 @@ public class Usuarios extends HttpServlet {
             out.println("<h2>Correo: "+correo+"</h2>");
             out.println("<h2>Contraseña: "+contraseña+"</h2>");
             out.println("<button onclick=\"window.location='./index.html'\">Inicio</button>");
+            resultado = altaCuenta(nombre,apellidoPaterno,apellidoMaterno,correo,contraseña);
+            if(resultado == 1){
+                out.println("<h1>El registro fue satisfactorio</h1>");
+            }
+
+            
+        } catch(Exception e){
+            resultado = 0;
+            mensajeError = e.getMessage();
+            if(e.hashCode() == 1062){
+                out.println("<h1>El registro de la cuenta no </h1>");
+            }else{
+                out.println("<h1>El registro no fue satisfactorio, codigo de error"+e.hashCode()+": "+mensajeError+"</h1>");
+            }
+                
+            
+        }
+        finally{
+            out.println("<button onclick=\"window.location='./Registrarse.html'\">Regresar</button>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -128,4 +157,34 @@ public class Usuarios extends HttpServlet {
         return "Short description";
     }// </edtor-fold>
 
+    
+    private int altaCuenta(String nombre,
+            String apellidoPaterno,
+            String apellidoMaterno,
+            String correo,
+            String password) throws SQLException{
+                String isql = "insert into mregisro" 
+                    +"(nombre, apellido_paterno, apellido_materno, correo, contraseña)"
+                    +"values(?,?,?,?,?)";
+                
+                PreparedStatement ps = con.prepareStatement(isql);
+                ps.setString(1, nombre);
+                ps.setString(2, apellidoPaterno);
+                ps.setString(3, apellidoMaterno);
+                ps.setString(4, correo);
+                ps.setString(5, password);
+                int resultado = ps.executeUpdate();
+                ps.close();
+                return resultado;
+        }
+    
+    
+    public void destroy(){
+        try{
+            con.close();
+        }catch(Exception e){
+            super.destroy();
+        }
+    }
+    
 }
