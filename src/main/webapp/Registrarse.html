@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+    <body>
+        <div><h1>Registrarse</h1></div>
+        <div>
+            <form name="frm_registro" method="POST" action="Usuarios">
+                <table>
+                    <tr>
+                        <td>Nombre</td>
+                        <td><input type="text" size="40" name="Nombre" id="Nombre"></td>
+                    </tr>
+                    <tr>
+                        <td>Apellido paterno</td>
+                        <td><input type="text" size="50" name="Apat" id="Apat"></td>
+                    </tr>
+                    <tr>
+                        <td>Apellido materno</td>
+                        <td><input type="text" size="50" name="Apmat" id="Apmat"></td>
+                    </tr>
+                    <tr>
+                        <td>Correo</td>
+                        <td><input type="text" size="60" name="Correo" id="Correo"></td>
+                    </tr>
+                    <tr>
+                        <td>Contraseña</td>
+                        <td><input  type="password" size="50" name="Password" id="Password"></td>
+                    </tr>
+                    <tr colspan="2">
+                        <td><input type="submit" value="Registrarse"></td>
+                    </tr>
+                </table>
+            </form>
+            <div>
+                <p>¿Ya tienes cuenta?, Inicia Sesión para unos taquitos</p>
+                <button onclick="window.location='Iniciar Sesión.html'">Iniciar Sesión</button>
+            </div>
+        </div>
+    </body>
+</html>
